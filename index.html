@@ -2,55 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Grocery Barcode Scanner</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Updated Content Security Policy to allow blob: scripts -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com blob:; style-src 'self' 'unsafe-inline';">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <h1>Grocery Barcode Scanner</h1>
-    
-    <div id="scanner-container">
-        <video id="video" autoplay></video>
-        <canvas id="overlay"></canvas>
-        <button id="scan-button" disabled>Scan</button>
-    </div>
-    
-    <div id="data-entry" style="display: none;">
-        <h2>Enter Product Details</h2>
-        <form id="product-form">
-            <label for="barcode">Barcode:</label>
-            <input type="text" id="barcode" name="barcode" readonly><br><br>
-            
-            <label for="name">Product Name:</label>
-            <input type="text" id="name" name="name" required><br><br>
-            
-            <label for="location">Location:</label>
-            <input type="text" id="location" name="location" required><br><br>
-            
-            <label for="downstack">Downstack Pallet:</label>
-            <input type="text" id="downstack" name="downstack" required><br><br>
-            
-            <button type="submit">Add Product</button>
-            <button type="button" id="cancel-button">Cancel</button>
-        </form>
-    </div>
-    
-    <div id="data-management">
-        <h2>Manage Product Data</h2>
-        <button id="export-button">Export CSV</button>
-        <input type="file" id="import-file" accept=".csv" style="display: none;">
-        <label for="import-file" class="custom-file-upload">Import CSV</label>
-    </div>
-    
-    <div id="ar-overlay"></div>
-    <p id="result">Scan a barcode to add a product.</p>
-
-    <!-- Libraries -->
+    <title>UPC Barcode Scanner with AR</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Including Libraries via CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js" defer></script>
-    <!-- Your Scripts -->
-    <script src="app.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <div id="message"></div>
+
+    <div id="video-container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="overlay"></canvas>
+    </div>
+
+    <div id="controls">
+        <button id="startButton">Start Scanner</button>
+        <button id="exportButton">Export CSV</button>
+    </div>
+
+    <!-- Modal for Missing Information -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <h2>Missing Information</h2>
+            <p>UPC: <span id="modalUPC"></span></p>
+            <label for="itemName">Item Name:</label>
+            <input type="text" id="itemName" placeholder="Enter item name">
+            <label for="aisleLocation">Aisle Location:</label>
+            <input type="text" id="aisleLocation" placeholder="Enter aisle location">
+            <label for="pallet">Downstack Pallet:</label>
+            <input type="text" id="pallet" placeholder="Enter downstack pallet">
+            <button id="saveInfo">Save</button>
+        </div>
+    </div>
+
 </body>
 </html>
