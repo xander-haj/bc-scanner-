@@ -94,6 +94,27 @@ button {
     transition: background-color 0.3s ease; /* Smooth color transition */
 }
 
+/* Loading Spinner Styles */
+.spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    display: none; /* Hidden by default */
+    z-index: 1001; /* Above overlay */
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
 /* Modal Styles */
 .modal {
     display: none; /* Hidden by default */

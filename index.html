@@ -13,13 +13,18 @@
 </head>
 <body>
 
+    <!-- Message Display -->
     <div id="message"></div>
 
+    <!-- Video Container with Loading Spinner -->
     <div id="video-container">
         <video id="video" autoplay playsinline></video>
         <canvas id="overlay"></canvas>
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="spinner"></div>
     </div>
 
+    <!-- Controls -->
     <div id="controls">
         <button id="startButton">Start Scanner</button>
         <button id="exportButton">Export CSV</button>
@@ -39,6 +44,9 @@
             <button id="saveInfo">Save</button>
         </div>
     </div>
+
+    <!-- Audio Element for Beep Sound -->
+    <audio id="beepSound" src="https://www.soundjay.com/buttons/sounds/beep-07.mp3" preload="auto"></audio>
 
 </body>
 </html>

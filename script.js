@@ -16,6 +16,8 @@ const saveInfoButton = document.getElementById('saveInfo');
 const video = document.getElementById('video');
 const overlay = document.getElementById('overlay');
 const overlayCtx = overlay.getContext('2d');
+const loadingSpinner = document.getElementById('loadingSpinner');
+const beepSound = document.getElementById('beepSound');
 
 // Load initial CSV data from GitHub Pages
 // Since GitHub Pages is static, you need to host the CSV file in the repository and fetch it
@@ -69,6 +71,8 @@ function showMessage(msg, isError = true) {
 
 // Function to start the scanner
 function startScanner() {
+    loadingSpinner.style.display = 'block'; // Show spinner
+
     Quagga.init({
         inputStream: {
             type: "LiveStream",
@@ -86,27 +90,29 @@ function startScanner() {
         numOfWorkers: navigator.hardwareConcurrency || 4,
         frequency: 10,
         debug: {
-            showCanvas: false,
-            showPatches: false,
-            showFoundPatches: false,
-            showSkeleton: false,
-            showLabels: false,
-            showPatchLabels: false,
-            showRemainingPatchLabels: false,
+            showCanvas: true, // Enable for debugging
+            showPatches: true, // Enable for debugging
+            showFoundPatches: true, // Enable for debugging
+            showSkeleton: true, // Enable for debugging
+            showLabels: true, // Enable for debugging
+            showPatchLabels: true, // Enable for debugging
+            showRemainingPatchLabels: true, // Enable for debugging
             boxFromPatches: {
-                showTransformed: false,
-                showTransformedBox: false,
-                showBB: false
+                showTransformed: true, // Enable for debugging
+                showTransformedBox: true, // Enable for debugging
+                showBB: true // Enable for debugging
             }
         }
     }, function(err) {
         if (err) {
             console.error(err);
             showMessage('Error initializing scanner.');
+            loadingSpinner.style.display = 'none'; // Hide spinner on error
             return;
         }
         Quagga.start();
         console.log('Quagga started.');
+        loadingSpinner.style.display = 'none'; // Hide spinner once started
     });
 
     Quagga.onDetected(onDetected);
@@ -118,7 +124,7 @@ function onDetected(result) {
     const code = result.codeResult.code;
     if (code !== currentUPC) { // Prevent multiple detections of the same UPC
         currentUPC = code;
-        barcodeDetected = true; // Set flag to change rectangle color
+        barcodeDetected = true; // Set flag to change rectangle color and display text
         Quagga.pause(); // Pause scanning while processing
         console.log('Detected UPC:', code);
         handleUPC(code);
@@ -144,12 +150,13 @@ function onProcessed(result) {
         }
     }
 
-    // Draw the rectangle guide with color based on barcode detection
+    // Draw the rectangle guide with appropriate color and text
     if (barcodeDetected) {
-        drawGuideRectangle('rgba(0, 255, 0, 0.7)'); // Green color
+        drawGuideRectangle('rgba(0, 255, 0, 0.7)', 'Scanned!');
+        beepSound.play(); // Play beep sound upon scanning
         barcodeDetected = false; // Reset flag
     } else {
-        drawGuideRectangle(); // Default red color
+        drawGuideRectangle(); // Default red color and text
     }
 }
 
@@ -166,8 +173,8 @@ function drawPath(path, color) {
     overlayCtx.stroke();
 }
 
-// Function to draw the rectangle guide
-function drawGuideRectangle(color = 'rgba(255, 0, 0, 0.7)') {
+// Function to draw the rectangle guide and floating text
+function drawGuideRectangle(color = 'rgba(255, 0, 0, 0.7)', text = 'Please align barcode') {
     const width = overlay.width;
     const height = overlay.height;
     const rectWidth = width * 0.6; // 60% of the video width
@@ -175,11 +182,21 @@ function drawGuideRectangle(color = 'rgba(255, 0, 0, 0.7)') {
     const rectX = (width - rectWidth) / 2; // Center horizontally
     const rectY = (height - rectHeight) / 2; // Center vertically
 
+    // Draw the rectangle
     overlayCtx.beginPath();
     overlayCtx.lineWidth = 4;
     overlayCtx.strokeStyle = color; // Dynamic color based on detection
     overlayCtx.rect(rectX, rectY, rectWidth, rectHeight);
     overlayCtx.stroke();
+
+    // Draw the floating text above the rectangle
+    overlayCtx.font = '20px Arial';
+    overlayCtx.fillStyle = '#FFFFFF'; // White text color for visibility
+    overlayCtx.textAlign = 'center';
+    overlayCtx.textBaseline = 'bottom';
+    const textX = width / 2;
+    const textY = rectY - 10; // 10 pixels above the rectangle
+    overlayCtx.fillText(text, textX, textY);
 }
 
 // Handle UPC after detection
