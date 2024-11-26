@@ -4,6 +4,7 @@
 let csvData = [];
 let currentUPC = '';
 const csvFileName = 'data.csv'; // Initial CSV file name
+let barcodeDetected = false; // Flag to track barcode detection
 
 // Elements
 const startButton = document.getElementById('startButton');
@@ -60,6 +61,7 @@ function showMessage(msg, isError = true) {
     message.textContent = msg;
     message.style.display = 'block';
     message.style.backgroundColor = isError ? '#dc3545' : '#28a745';
+    console.log(`Message shown: ${msg}`);
     setTimeout(() => {
         message.style.display = 'none';
     }, 3000);
@@ -75,7 +77,7 @@ function startScanner() {
                 height: { ideal: 480 },
                 facingMode: "environment" // Use rear camera
             },
-            target: document.querySelector('#video-container') // Or '#yourElement' (optional)
+            target: document.querySelector('#video-container') // Ensure this is correct
         },
         decoder: {
             readers: ["upc_reader", "upc_e_reader"] // Specify barcode types
@@ -116,6 +118,7 @@ function onDetected(result) {
     const code = result.codeResult.code;
     if (code !== currentUPC) { // Prevent multiple detections of the same UPC
         currentUPC = code;
+        barcodeDetected = true; // Set flag to change rectangle color
         Quagga.pause(); // Pause scanning while processing
         console.log('Detected UPC:', code);
         handleUPC(code);
@@ -141,12 +144,13 @@ function onProcessed(result) {
         }
     }
 
-    // Draw the rectangle guide
+    // Draw the rectangle guide with color based on barcode detection
     drawGuideRectangle();
 }
 
 // Function to draw paths on the canvas
 function drawPath(path, color) {
+    if (!path || path.length === 0) return;
     overlayCtx.beginPath();
     overlayCtx.moveTo(path[0].x, path[0].y);
     path.forEach(point => {
@@ -161,16 +165,22 @@ function drawPath(path, color) {
 function drawGuideRectangle() {
     const width = overlay.width;
     const height = overlay.height;
-    const rectWidth = width * 0.6;
-    const rectHeight = height * 0.2;
-    const rectX = (width - rectWidth) / 2;
-    const rectY = (height - rectHeight) / 2;
+    const rectWidth = width * 0.6; // 60% of the video width
+    const rectHeight = height * 0.2; // 20% of the video height
+    const rectX = (width - rectWidth) / 2; // Center horizontally
+    const rectY = (height - rectHeight) / 5; // Center vertically
 
     overlayCtx.beginPath();
     overlayCtx.lineWidth = 4;
-    overlayCtx.strokeStyle = 'rgba(255, 0, 0, 0.7)'; // Semi-transparent red
+    // Change color based on detection
+    overlayCtx.strokeStyle = barcodeDetected ? 'rgba(0, 255, 0, 0.7)' : 'rgba(255, 0, 0, 0.7)';
     overlayCtx.rect(rectX, rectY, rectWidth, rectHeight);
     overlayCtx.stroke();
+
+    // Reset the flag after drawing
+    if (barcodeDetected) {
+        barcodeDetected = false;
+    }
 }
 
 // Handle UPC after detection

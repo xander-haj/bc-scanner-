@@ -14,7 +14,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Remove height: 100vh to prevent cropping */
+    /* Removed height: 100vh to prevent cropping */
     overflow: hidden;
 }
 
@@ -22,13 +22,14 @@ body {
     position: relative;
     width: 100%;
     max-width: 600px;
-    /* Remove flex: 1 to prevent stretching */
+    aspect-ratio: 4 / 3; /* Maintains a 4:3 aspect ratio */
     background-color: #000;
 }
 
 video {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover; /* Ensures the video covers the container without distortion */
     display: block;
 }
 
