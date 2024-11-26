@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grocery Barcode Scanner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline';">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Grocery Barcode Scanner</h1>
+    
+    <div id="scanner-container">
+        <video id="video" autoplay></video>
+        <canvas id="overlay"></canvas>
+        <button id="scan-button" disabled>Scan</button>
+    </div>
+    
+    <div id="data-entry" style="display: none;">
+        <h2>Enter Product Details</h2>
+        <form id="product-form">
+            <label for="barcode">Barcode:</label>
+            <input type="text" id="barcode" name="barcode" readonly><br><br>
+            
+            <label for="name">Product Name:</label>
+            <input type="text" id="name" name="name" required><br><br>
+            
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required><br><br>
+            
+            <label for="downstack">Downstack Pallet:</label>
+            <input type="text" id="downstack" name="downstack" required><br><br>
+            
+            <button type="submit">Add Product</button>
+            <button type="button" id="cancel-button">Cancel</button>
+        </form>
+    </div>
+    
+    <div id="data-management">
+        <h2>Manage Product Data</h2>
+        <button id="export-button">Export CSV</button>
+        <input type="file" id="import-file" accept=".csv" style="display: none;">
+        <label for="import-file" class="custom-file-upload">Import CSV</label>
+    </div>
+    
+    <div id="ar-overlay"></div>
+    <p id="result">Scan a barcode to add a product.</p>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <!-- Your Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
