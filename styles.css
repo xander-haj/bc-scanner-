@@ -17,6 +17,7 @@ video {
     height: auto; /* Maintain aspect ratio */
     border: 2px solid #ccc;
     border-radius: 4px;
+    background-color: #000;
 }
 
 canvas {
