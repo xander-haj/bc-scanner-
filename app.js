@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
             type: "LiveStream",
             target: document.querySelector('#video'), // Or '#scanner-container' for full container
             constraints: {
+                width: { min: 640 }, // Minimum width of the video stream
+                height: { min: 480 }, // Minimum height of the video stream
                 facingMode: "environment" // Use rear camera
             }
         },
@@ -25,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
             readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader", "upc_e_reader", "code_39_reader"] // Add or remove barcode formats as needed
         },
         locate: true, // Enable locating
+        numOfWorkers: navigator.hardwareConcurrency || 4, // Optimize based on device
+        frequency: 10, // Scan frequency (higher for faster scanning)
     }, function(err) {
         if (err) {
             console.error(err);
@@ -53,6 +57,29 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error(err);
         resultElement.textContent = `Error: ${err}`;
         alert('Camera access is required to scan barcodes.');
+    });
+
+    // Handle processed frames for debugging (optional)
+    Quagga.onProcessed((result) => {
+        const drawingCtx = Quagga.canvas.ctx.overlay,
+              drawingCanvas = Quagga.canvas.dom.overlay;
+
+        if (result) {
+            if (result.boxes) {
+                drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
+                result.boxes.filter(box => box !== result.box).forEach(box => {
+                    Quagga.ImageDebug.drawPath(box, {x: 0, y: 1}, drawingCtx, {color: "green", lineWidth: 2});
+                });
+            }
+
+            if (result.box) {
+                Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: "#00F", lineWidth: 2});
+            }
+
+            if (result.codeResult && result.codeResult.code) {
+                Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: 'red', lineWidth: 3});
+            }
+        }
     });
 
     // Manual scan button click
