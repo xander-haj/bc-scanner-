@@ -145,7 +145,12 @@ function onProcessed(result) {
     }
 
     // Draw the rectangle guide with color based on barcode detection
-    drawGuideRectangle();
+    if (barcodeDetected) {
+        drawGuideRectangle('rgba(0, 255, 0, 0.7)'); // Green color
+        barcodeDetected = false; // Reset flag
+    } else {
+        drawGuideRectangle(); // Default red color
+    }
 }
 
 // Function to draw paths on the canvas
@@ -162,25 +167,19 @@ function drawPath(path, color) {
 }
 
 // Function to draw the rectangle guide
-function drawGuideRectangle() {
+function drawGuideRectangle(color = 'rgba(255, 0, 0, 0.7)') {
     const width = overlay.width;
     const height = overlay.height;
     const rectWidth = width * 0.6; // 60% of the video width
     const rectHeight = height * 0.2; // 20% of the video height
     const rectX = (width - rectWidth) / 2; // Center horizontally
-    const rectY = (height - rectHeight) / 5; // Center vertically
+    const rectY = (height - rectHeight) / 2; // Center vertically
 
     overlayCtx.beginPath();
     overlayCtx.lineWidth = 4;
-    // Change color based on detection
-    overlayCtx.strokeStyle = barcodeDetected ? 'rgba(0, 255, 0, 0.7)' : 'rgba(255, 0, 0, 0.7)';
+    overlayCtx.strokeStyle = color; // Dynamic color based on detection
     overlayCtx.rect(rectX, rectY, rectWidth, rectHeight);
     overlayCtx.stroke();
-
-    // Reset the flag after drawing
-    if (barcodeDetected) {
-        barcodeDetected = false;
-    }
 }
 
 // Handle UPC after detection
@@ -300,7 +299,7 @@ console.log('Page loaded. CSV data is being loaded.');
 
 // Adjust canvas size when video metadata is loaded
 video.addEventListener('loadedmetadata', () => {
-    overlay.width = video.videoWidth;
-    overlay.height = video.videoHeight;
+    overlay.width = video.clientWidth;
+    overlay.height = video.clientHeight;
     console.log('Canvas size set to video dimensions.');
 });
