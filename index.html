@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Grocery Barcode Scanner</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Content Security Policy -->
+    <!-- Updated Content Security Policy to allow blob: scripts -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com blob:; style-src 'self' 'unsafe-inline';">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -48,9 +48,9 @@
     <p id="result">Scan a barcode to add a product.</p>
 
     <!-- Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js" defer></script>
     <!-- Your Scripts -->
-    <script src="app.js"></script>
+    <script src="app.js" defer></script>
 </body>
 </html>
